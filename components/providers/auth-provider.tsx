@@ -2,27 +2,29 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase';
 
-const AuthContext = createContext({
+interface AuthContextType {
+  user: any;
+  setUser: (user: any) => void;
+}
+
+const AuthContext = createContext<AuthContextType>({
   user: null,
-  isAdmin: false,
+  setUser: () => {},
 });
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user || null);
-      setIsAdmin(session?.user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL);
-    });
-    return () => subscription.unsubscribe();
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin }}>
+    <AuthContext.Provider value={{ user, setUser }}>
       {children}
     </AuthContext.Provider>
   );
