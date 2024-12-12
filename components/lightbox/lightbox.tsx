@@ -21,11 +21,33 @@ export function Lightbox({
   onNext,
   onPrevious
 }: LightboxProps) {
+  const [isSlideshow, setIsSlideshow] = useState(false);
+  
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isSlideshow) {
+      interval = setInterval(onNext, 3000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isSlideshow, onNext]);
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") onClose();
     if (e.key === "ArrowRight") onNext();
     if (e.key === "ArrowLeft") onPrevious();
+    if (e.key === " ") setIsSlideshow(prev => !prev);
   }, [onClose, onNext, onPrevious]);
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    if (e.deltaY > 0) {
+      onNext();
+    } else {
+      onPrevious();
+    }
+  }, [onNext, onPrevious]);
 
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
@@ -37,14 +59,26 @@ export function Lightbox({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
       <div className="relative h-full w-full">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-4 top-4 z-50"
-          onClick={onClose}
-        >
-          <X className="h-6 w-6" />
-        </Button>
+        <div className="absolute right-4 top-4 z-50 flex gap-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsSlideshow(prev => !prev)}
+          >
+            {isSlideshow ? (
+              <span className="h-6 w-6">⏸</span>
+            ) : (
+              <span className="h-6 w-6">▶</span>
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+          >
+            <X className="h-6 w-6" />
+          </Button>
+        </div>
         
         <Button
           variant="ghost"
@@ -71,6 +105,7 @@ export function Lightbox({
               src={currentImage.url}
               alt={currentImage.description}
               className="h-full w-full object-contain"
+              onWheel={handleWheel}
             />
           </div>
         </div>
