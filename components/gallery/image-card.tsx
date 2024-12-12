@@ -1,7 +1,8 @@
+
 "use client";
 
 import { Heart } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 import { Image as ImageType } from "@/lib/data";
 
@@ -12,11 +13,11 @@ interface ImageCardProps {
 
 export function ImageCard({ image, onClick }: ImageCardProps) {
   return (
-    <Card className="overflow-hidden transition-all duration-300 hover:scale-[1.02] bg-[#141414]"> {/* Added background color */}
+    <Card className="overflow-hidden transition-all duration-300 hover:scale-[1.02] bg-[#141414]">
       <CardContent className="p-0">
         <button
           onClick={onClick}
-          className="gallery-item relative w-[304px] h-[304px] overflow-hidden rounded-[3px]" {/* Updated border radius */}
+          className="gallery-item relative w-[304px] h-[304px] overflow-hidden rounded-[3px]"
         >
           <Image
             src={image.url}
