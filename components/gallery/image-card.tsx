@@ -12,7 +12,7 @@ interface ImageCardProps {
 
 export function ImageCard({ image, onClick }: ImageCardProps) {
   return (
-    <Card className="overflow-hidden transition-transform hover:scale-[1.02]">
+    <Card className="overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-primary/20 bg-secondary">
       <CardContent className="p-0">
         <button
           onClick={onClick}
