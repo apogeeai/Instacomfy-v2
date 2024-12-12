@@ -9,7 +9,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export function Header() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
