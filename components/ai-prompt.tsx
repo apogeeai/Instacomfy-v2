@@ -5,8 +5,7 @@ import { useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import OpenAI from "openai";
+import { OpenAI } from "openai";
 import { supabase } from "@/lib/supabase";
 
 interface AIPromptProps {
@@ -38,16 +37,13 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
       if (response.data?.[0]?.url) {
         const imageUrl = response.data[0].url;
         
-        // Save to Supabase
         const { error } = await supabase
           .from('generated_images')
-          .insert([
-            { 
-              url: imageUrl,
-              prompt: prompt,
-              created_at: new Date().toISOString()
-            }
-          ]);
+          .insert([{ 
+            url: imageUrl,
+            prompt: prompt,
+            created_at: new Date().toISOString()
+          }]);
           
         if (error) {
           console.error('Error saving to database:', error);
@@ -65,7 +61,7 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
   };
 
   return (
-    <Card className="fixed bottom-4 left-1/2 w-full max-w-[600px] -translate-x-1/2 p-4">
+    <div className="fixed bottom-4 left-1/2 w-full max-w-[600px] -translate-x-1/2 bg-background p-4 rounded-lg border shadow-sm">
       <form onSubmit={handleSubmit} className="flex space-x-2">
         <Input
           value={prompt}
@@ -78,6 +74,6 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
           <Send className="h-4 w-4" />
         </Button>
       </form>
-    </Card>
+    </div>
   );
 }
