@@ -14,12 +14,14 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === 'admin' && password === 'P@ssword123!') {
+    if (email === 'adam@apogeeintelligence.ai' && password === 'P@ssword123!') {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: 'admin@example.com',
+        email: 'adam@apogeeintelligence.ai',
         password: 'P@ssword123!'
       });
       if (!error) router.push('/');
+    } else {
+      alert('Invalid credentials');
     }
   };
 
