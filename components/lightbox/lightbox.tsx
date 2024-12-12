@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Image } from "@/lib/data";
@@ -54,10 +54,18 @@ export function Lightbox({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
+  useEffect(() => {
+    // Disable scrolling on the background when the lightbox is open
+    document.body.style.overflow = currentImage ? 'hidden' : 'auto';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [currentImage]);
+
   if (!currentImage) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm dark:bg-background/90">
       <div className="relative h-full w-full">
         <div className="absolute right-4 top-4 z-50 flex gap-2">
           <Button
@@ -110,7 +118,7 @@ export function Lightbox({
           </div>
         </div>
 
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-md bg-background/90 p-4 backdrop-blur">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-md bg-background/90 p-4 backdrop-blur dark:bg-background/95 dark:text-foreground">
           <p className="text-sm">{currentImage.description}</p>
         </div>
       </div>
