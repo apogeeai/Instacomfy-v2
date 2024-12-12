@@ -32,7 +32,7 @@ export function Header() {
                 <Link href="/upload">Upload</Link>
               </Button>
             )}
-            {user?.email === 'adam@apogeeintelligence.ai' && (
+            {user && isAdmin && (
               <Button variant="ghost" asChild>
                 <Link href="/admin">Admin</Link>
               </Button>
