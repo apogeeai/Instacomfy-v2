@@ -38,7 +38,24 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
       });
 
       if (response.data[0].url) {
-        onGenerate(response.data[0].url);
+        const imageUrl = response.data[0].url;
+        
+        // Save to Supabase
+        const { data, error } = await supabase
+          .from('generated_images')
+          .insert([
+            { 
+              url: imageUrl,
+              prompt: prompt,
+              created_at: new Date().toISOString()
+            }
+          ]);
+          
+        if (error) {
+          console.error('Error saving to database:', error);
+        }
+
+        onGenerate(imageUrl);
         setPrompt("");
       }
     } catch (error) {
