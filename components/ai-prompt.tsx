@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import OpenAI from "openai";
+import { supabase } from "@/lib/supabase";
 
 interface AIPromptProps {
   onGenerate: (imageUrl: string) => void;
@@ -22,26 +23,23 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
 
     setIsLoading(true);
     try {
-      if (!process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
-        throw new Error("OpenAI API key is not set");
-      }
-      
       const openai = new OpenAI({
         apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
         dangerouslyAllowBrowser: true
       });
 
       const response = await openai.images.generate({
+        model: "dall-e-2",
         prompt: prompt,
         n: 1,
         size: "1024x1024",
       });
 
-      if (response.data[0].url) {
+      if (response.data?.[0]?.url) {
         const imageUrl = response.data[0].url;
         
         // Save to Supabase
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('generated_images')
           .insert([
             { 
@@ -58,8 +56,9 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         onGenerate(imageUrl);
         setPrompt("");
       }
-    } catch (error) {
-      console.error("Error generating image:", error);
+    } catch (error: any) {
+      console.error("Error generating image:", error?.error || error);
+      alert("Failed to generate image. Please try a different prompt.");
     } finally {
       setIsLoading(false);
     }
