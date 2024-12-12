@@ -16,7 +16,7 @@ export default function Login() {
     e.preventDefault();
     
     if (email === 'adam@apogeeintelligence.ai' && password === 'P@ssword123!') {
-      localStorage.setItem('user', JSON.stringify({ email }));
+      document.cookie = `user=${JSON.stringify({ email })};path=/;max-age=604800`;
       router.push('/');
       router.refresh();
     } else {

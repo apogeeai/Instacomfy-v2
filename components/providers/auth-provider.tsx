@@ -20,9 +20,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
+    const getCookie = (name: string) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop()?.split(';').shift();
+    };
+
+    const userCookie = getCookie('user');
+    if (userCookie) {
+      const parsedUser = JSON.parse(userCookie);
       setUser(parsedUser);
       setIsAdmin(parsedUser.email === 'adam@apogeeintelligence.ai');
     }
