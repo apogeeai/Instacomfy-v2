@@ -9,7 +9,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export function Header() {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -32,7 +32,7 @@ export function Header() {
                 <Link href="/upload">Upload</Link>
               </Button>
             )}
-            {user && (
+            {user?.email === 'adam@apogeeintelligence.ai' && (
               <Button variant="ghost" asChild>
                 <Link href="/admin">Admin</Link>
               </Button>
