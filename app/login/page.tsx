@@ -17,8 +17,7 @@ export default function Login() {
     
     if (email === 'adam@apogeeintelligence.ai' && password === 'P@ssword123!') {
       document.cookie = `user=${JSON.stringify({ email })};path=/;max-age=604800`;
-      router.push('/');
-      router.refresh();
+      window.location.href = '/';
     } else {
       alert('Invalid credentials');
     }

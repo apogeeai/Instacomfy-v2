@@ -21,15 +21,26 @@ export default function Upload() {
         const fileName = `${Math.random()}.${fileExt}`;
         const { data, error } = await supabase.storage
           .from('images')
-          .upload(fileName, file);
+          .upload(`uploads/${fileName}`, file);
           
-        if (data) {
-          const { data: { publicUrl } } = supabase.storage
-            .from('images')
-            .getPublicUrl(fileName);
-            
-          await supabase.from('generated_images')
-            .insert([{ url: publicUrl, user_id: user?.id }]);
+        if (error) {
+          console.error('Upload error:', error);
+          continue;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('images')
+          .getPublicUrl(`uploads/${fileName}`);
+          
+        const { error: dbError } = await supabase.from('generated_images')
+          .insert([{ 
+            url: publicUrl,
+            prompt: 'Uploaded image',
+            created_at: new Date().toISOString()
+          }]);
+
+        if (dbError) {
+          console.error('Database error:', dbError);
         }
       }
     } catch (error) {
