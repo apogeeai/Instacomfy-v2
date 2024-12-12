@@ -22,6 +22,10 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
 
     setIsLoading(true);
     try {
+      if (!process.env.NEXT_PUBLIC_OPENAI_API_KEY) {
+        throw new Error("OpenAI API key is not set");
+      }
+      
       const openai = new OpenAI({
         apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
         dangerouslyAllowBrowser: true
