@@ -19,6 +19,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  const signIn = () => {
+    window.location.href = '/login';
+  };
+
+  const signOut = () => {
+    document.cookie = 'user=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT';
+    window.location.href = '/';
+  };
+
   useEffect(() => {
     const getCookie = (name: string) => {
       const value = `; ${document.cookie}`;
@@ -35,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isAdmin }}>
+    <AuthContext.Provider value={{ user, setUser, isAdmin, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
