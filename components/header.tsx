@@ -32,7 +32,7 @@ export function Header() {
                 <Link href="/upload">Upload</Link>
               </Button>
             )}
-            {isAdmin && (
+            {user && (
               <Button variant="ghost" asChild>
                 <Link href="/admin">Admin</Link>
               </Button>
