@@ -12,7 +12,7 @@ export function Header() {
   const { user, signIn, signOut } = useAuth();
 
   return (
-    <nav className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur">
+    <nav className="sticky top-0 z-40 w-full bg-[#141414]">
       <div className="mx-auto min-w-[420px] max-w-[1260px] px-4">
         <div className="flex h-16 items-center">
           <div className="flex w-full justify-between">
