@@ -100,7 +100,8 @@
 
 .gallery-item {
   position: relative;
-  padding-bottom: 100%;
+  width: 304px;
+  height: 304px;
   cursor: pointer;
   overflow: hidden;
   border-radius: 3px;

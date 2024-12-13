@@ -17,7 +17,8 @@ export function ImageCard({ image, onClick }: ImageCardProps) {
       <CardContent className="p-0">
         <button
           onClick={onClick}
-          className="gallery-item relative w-[304px] h-[304px] overflow-hidden rounded-[3px]"
+          className="gallery-item relative w-[304px] h-[304px] overflow-hidden"
+          style={{ borderRadius: "3px" }}
         >
           <Image
             src={image.url}
