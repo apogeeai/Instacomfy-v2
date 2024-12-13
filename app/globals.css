@@ -90,28 +90,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
-  padding: 1rem;
-}
-
-.gallery-item {
-  position: relative;
-  padding-bottom: 100%;
-  cursor: pointer;
-  overflow: hidden;
-  border-radius: 3px;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.5s ease forwards;
-}
-
-@keyframes fadeInUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
