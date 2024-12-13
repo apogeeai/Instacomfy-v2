@@ -50,7 +50,7 @@
     --color-5: 90 100% 63%;
   }
   .dark {
-    --background: 240 10% 4%;
+    --background: 0 0% 8%;
     --foreground: 0 0% 98%;
     --card: 240 10% 4%;
     --card-foreground: 0 0% 98%;
