@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -12,6 +11,7 @@ interface GalleryProps {
 
 export function Gallery({ images }: GalleryProps) {
   const [currentImage, setCurrentImage] = useState<Image | null>(null);
+
   const currentIndex = currentImage ? images.findIndex(img => img.id === currentImage.id) : -1;
 
   const handleNext = () => {
@@ -37,6 +37,7 @@ export function Gallery({ images }: GalleryProps) {
           />
         ))}
       </div>
+
       <Lightbox
         images={images}
         currentImage={currentImage}
