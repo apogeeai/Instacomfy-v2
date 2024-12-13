@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Heart } from "lucide-react";
@@ -13,26 +12,17 @@ interface ImageCardProps {
 
 export function ImageCard({ image, onClick }: ImageCardProps) {
   return (
-    <Card className="overflow-hidden transition-all duration-300 hover:scale-[1.02] bg-[#141414]">
-      <CardContent className="p-0">
-        <button
-          onClick={onClick}
-          className="gallery-item relative w-[304px] h-[304px] overflow-hidden"
-          style={{ borderRadius: "3px" }}
-        >
-          <Image
-            src={image.url}
-            alt={image.description}
-            fill
-            className="object-cover transition-transform duration-300"
-            sizes="304px"
-            priority={image.id <= 4 ? true : undefined}
-          />
-          <div className="gallery-item-overlay">
-            <Heart className="h-8 w-8 text-white" />
-          </div>
-        </button>
-      </CardContent>
-    </Card>
+    <CardContent className="gallery-item relative w-[304px] h-[304px] overflow-hidden rounded-[3px]">
+      <button onClick={onClick} className="">
+        <Image
+          src={image.url}
+          alt={image.description}
+          fill
+          className="object-cover transition-transform duration-300"
+          sizes="304px"
+          priority={image.id <= 4 ? true : undefined}
+        />
+      </button>
+    </CardContent>
   );
 }
