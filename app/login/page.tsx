@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -13,12 +14,16 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await signIn('credentials', {
+    
+    const result = await signIn('credentials', {
       email,
       password,
-      redirect: true,
+      redirect: false,
       callbackUrl: '/'
     });
+
+    if (result?.ok) {
+      router.push('/');
     } else {
       alert('Invalid credentials');
     }
