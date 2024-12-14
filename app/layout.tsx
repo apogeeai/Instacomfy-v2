@@ -1,6 +1,6 @@
-
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { AuthProvider } from '@/components/providers/auth-provider';
+import { Header } from '@/components/header';
 import './globals.css';
 
 export default function RootLayout({
@@ -11,9 +11,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
+      <Header />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
-            {children}
+            <main className="mx-auto max-w-[1260px]">
+              {children}
+            </main>
           </AuthProvider>
         </ThemeProvider>
       </body>

@@ -54,7 +54,7 @@ export default function Home() {
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <div className="min-h-screen bg-background">
         <div className="mx-auto min-w-[420px] max-w-[1260px]">
-          <Header />
+        
           <main className="p-4">
             <Gallery images={images} />
             {isFetching && (
