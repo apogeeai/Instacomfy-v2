@@ -39,7 +39,7 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         const tempImageUrl = data.imageUrl;
         
         // Download image and upload to Supabase storage
-        const imageResponse = await global.fetch(tempImageUrl);
+        const imageResponse = await fetch(`/api/proxy-image?url=${encodeURIComponent(tempImageUrl)}`);
         const imageBlob = await imageResponse.blob();
         
         const fileName = `ai-generated-${Date.now()}.png`;
