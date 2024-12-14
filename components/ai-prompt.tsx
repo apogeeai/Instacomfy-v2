@@ -6,6 +6,7 @@ import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import OpenAI from "openai";
 import { supabase } from "@/lib/supabase";
 
 interface AIPromptProps {
@@ -22,74 +23,42 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
 
     setIsLoading(true);
     try {
-      console.log("Generating image with prompt:", prompt);
-      
-      const response = await fetch('/api/generate-image', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt }),
+      const openai = new OpenAI({
+        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true
       });
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate image');
-      }
-      
-      if (!data.imageUrl) {
-        throw new Error('No image URL received');
-      }
+      const response = await openai.images.generate({
+        model: "dall-e-2",
+        prompt: prompt,
+        n: 1,
+        size: "1024x1024",
+      });
 
-      const tempImageUrl = data.imageUrl;
-      console.log("Temporary image URL:", tempImageUrl);
-      
-      const imageResponse = await fetch(`/api/proxy-image?url=${encodeURIComponent(tempImageUrl)}`);
-      if (!imageResponse.ok) {
-        throw new Error(`Failed to download image: ${imageResponse.status}`);
-      }
-      
-      const imageBlob = await imageResponse.blob();
-      const fileName = `ai-generated-${Date.now()}.png`;
-      
-      const { data: uploadData, error: uploadError } = await supabase
-        .storage
-        .from('images')
-        .upload(`public/${fileName}`, imageBlob, {
-          cacheControl: '3600',
-          upsert: true,
-          contentType: 'image/png',
-        });
-
-      if (uploadError) {
-        throw new Error(`Storage upload error: ${uploadError.message}`);
-      }
-
-      const { data: { publicUrl } } = supabase
-        .storage
-        .from('images')
-        .getPublicUrl(`public/${fileName}`);
-
-      const { error: dbError } = await supabase
-        .from('generated_images')
-        .insert([
-          { 
-            url: publicUrl,
-            prompt: prompt,
-            created_at: new Date().toISOString()
-          }
-        ]);
+      if (response.data?.[0]?.url) {
+        const imageUrl = response.data[0].url;
         
-      if (dbError) {
-        throw new Error(`Database error: ${dbError.message}`);
-      }
+        // Save to Supabase
+        const { error } = await supabase
+          .from('generated_images')
+          .insert([
+            { 
+              url: imageUrl,
+              prompt: prompt,
+              created_at: new Date().toISOString()
+            }
+          ]);
+          
+        if (error) {
+          console.error('Error saving to database:', error);
+        }
 
-      onGenerate(publicUrl);
-      setPrompt("");
+        onGenerate(imageUrl);
+        setPrompt("");
+      }
     } catch (error: any) {
-      console.error("Error:", error);
-      alert(`Failed to generate image: ${error?.message || 'Unknown error'}`);
+      console.error("Error generating image:", error?.error || error);
+      alert("Failed to generate image. Please try a different prompt.");
     } finally {
       setIsLoading(false);
     }
@@ -106,11 +75,7 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
           disabled={isLoading}
         />
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? (
-            <div className="animate-spin">⌛</div>
-          ) : (
-            <Send className="h-4 w-4" />
-          )}
+          <Send className="h-4 w-4" />
         </Button>
       </form>
     </Card>
