@@ -7,12 +7,16 @@ interface AuthContextType {
   user: any;
   setUser: (user: any) => void;
   isAdmin: boolean;
+  signIn: () => void;
+  signOut: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   setUser: () => {},
   isAdmin: false,
+  signIn: () => {},
+  signOut: () => {}
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -37,9 +41,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const userCookie = getCookie('user');
     if (userCookie) {
-      const parsedUser = JSON.parse(userCookie);
-      setUser(parsedUser);
-      setIsAdmin(parsedUser.email === 'adam@apogeeintelligence.ai');
+      try {
+        const parsedUser = JSON.parse(userCookie);
+        setUser(parsedUser);
+        setIsAdmin(parsedUser.email === 'adam@apogeeintelligence.ai');
+      } catch (error) {
+        console.error('Error parsing user cookie:', error);
+      }
     }
   }, []);
 

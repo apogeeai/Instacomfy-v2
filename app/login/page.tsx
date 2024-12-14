@@ -5,16 +5,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { supabase } from '@/lib/supabase';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (email === 'adam@apogeeintelligence.ai' && password === 'P@ssword123!') {
       document.cookie = `user=${JSON.stringify({ email })};path=/;max-age=604800`;
       window.location.href = '/';
