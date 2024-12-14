@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -8,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import OpenAI from "openai";
 import { supabase } from "@/lib/supabase";
+import { uploadImageToSupabase } from '@/utils/supabase-upload';
 
 interface AIPromptProps {
   onGenerate: (imageUrl: string) => void;
@@ -36,14 +36,22 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
       });
 
       if (response.data?.[0]?.url) {
-        const imageUrl = response.data[0].url;
+        const openaiUrl = response.data[0].url;
         
-        // Save to Supabase
+        // Download the image from OpenAI URL
+        const imageResponse = await fetch(openaiUrl);
+        const imageBlob = await imageResponse.blob();
+        const imageFile = new File([imageBlob], `dalle-${Date.now()}.png`, { type: 'image/png' });
+        
+        // Upload to Supabase storage
+        const supabaseImageUrl = await uploadImageToSupabase(imageFile, 'ai-generated');
+        
+        // Save to Supabase database
         const { error } = await supabase
           .from('generated_images')
           .insert([
             { 
-              url: imageUrl,
+              url: supabaseImageUrl,
               prompt: prompt,
               created_at: new Date().toISOString()
             }
@@ -53,7 +61,7 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
           console.error('Error saving to database:', error);
         }
 
-        onGenerate(imageUrl);
+        onGenerate(supabaseImageUrl);
         setPrompt("");
       }
     } catch (error: any) {
