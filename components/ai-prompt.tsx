@@ -36,14 +36,34 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
       });
 
       if (response.data?.[0]?.url) {
-        const imageUrl = response.data[0].url;
+        const tempImageUrl = response.data[0].url;
         
-        // Save to Supabase
+        // Download image and upload to Supabase storage
+        const imageResponse = await fetch(tempImageUrl);
+        const imageBlob = await imageResponse.blob();
+        
+        const fileName = `ai-generated-${Date.now()}.png`;
+        const { data: uploadData, error: uploadError } = await supabase
+          .storage
+          .from('images')
+          .upload(fileName, imageBlob);
+
+        if (uploadError) {
+          console.error('Error uploading to storage:', uploadError);
+          return;
+        }
+
+        const { data: { publicUrl } } = supabase
+          .storage
+          .from('images')
+          .getPublicUrl(fileName);
+
+        // Save to Supabase database
         const { error } = await supabase
           .from('generated_images')
           .insert([
             { 
-              url: imageUrl,
+              url: publicUrl,
               prompt: prompt,
               created_at: new Date().toISOString()
             }
