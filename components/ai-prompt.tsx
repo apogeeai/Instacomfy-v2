@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -39,7 +38,7 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         const tempImageUrl = response.data[0].url;
         
         // Download image and upload to Supabase storage
-        const imageResponse = await fetch(tempImageUrl);
+        const imageResponse = await global.fetch(tempImageUrl);
         const imageBlob = await imageResponse.blob();
         
         const fileName = `ai-generated-${Date.now()}.png`;
