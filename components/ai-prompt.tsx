@@ -22,20 +22,21 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
 
     setIsLoading(true);
     try {
-      const openai = new OpenAI({
-        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-        dangerouslyAllowBrowser: true
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
       });
 
-      const response = await openai.images.generate({
-        model: "dall-e-2",
-        prompt: prompt,
-        n: 1,
-        size: "1024x1024",
-      });
+      if (!response.ok) {
+        throw new Error('Failed to generate image');
+      }
 
-      if (response.data?.[0]?.url) {
-        const tempImageUrl = response.data[0].url;
+      const data = await response.json();
+      if (data.imageUrl) {
+        const tempImageUrl = data.imageUrl;
         
         // Download image and upload to Supabase storage
         const imageResponse = await global.fetch(tempImageUrl);
