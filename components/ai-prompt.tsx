@@ -73,7 +73,7 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
           console.error('Error saving to database:', error);
         }
 
-        onGenerate(imageUrl);
+        onGenerate(publicUrl);
         setPrompt("");
       }
     } catch (error: any) {
