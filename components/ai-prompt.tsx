@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -23,7 +24,6 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
     try {
       console.log("Generating image with prompt:", prompt);
       
-      // Generate image
       const response = await fetch('/api/generate-image', {
         method: 'POST',
         headers: {
@@ -45,25 +45,20 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
       const tempImageUrl = data.imageUrl;
       console.log("Temporary image URL:", tempImageUrl);
       
-      // Download image and upload to Supabase storage
-      console.log("Downloading image...");
       const imageResponse = await fetch(`/api/proxy-image?url=${encodeURIComponent(tempImageUrl)}`);
       if (!imageResponse.ok) {
         throw new Error(`Failed to download image: ${imageResponse.status}`);
       }
       
       const imageBlob = await imageResponse.blob();
-      console.log("Image downloaded, size:", imageBlob.size);
-      
       const fileName = `ai-generated-${Date.now()}.png`;
-      console.log("Uploading to Supabase storage:", fileName);
       
       const { data: uploadData, error: uploadError } = await supabase
         .storage
         .from('images')
-        .upload(fileName, imageBlob, {
+        .upload(`public/${fileName}`, imageBlob, {
           cacheControl: '3600',
-          upsert: false,
+          upsert: true,
           contentType: 'image/png',
         });
 
@@ -71,16 +66,11 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         throw new Error(`Storage upload error: ${uploadError.message}`);
       }
 
-      console.log("Upload successful:", uploadData);
-
       const { data: { publicUrl } } = supabase
         .storage
         .from('images')
-        .getPublicUrl(fileName);
+        .getPublicUrl(`public/${fileName}`);
 
-      console.log("Public URL generated:", publicUrl);
-
-      // Save to database
       const { error: dbError } = await supabase
         .from('generated_images')
         .insert([
@@ -95,15 +85,10 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         throw new Error(`Database error: ${dbError.message}`);
       }
 
-      console.log("Successfully saved to database");
       onGenerate(publicUrl);
       setPrompt("");
     } catch (error: any) {
-      console.error("Detailed error:", {
-        message: error?.message,
-        error: error,
-        stack: error?.stack
-      });
+      console.error("Error:", error);
       alert(`Failed to generate image: ${error?.message || 'Unknown error'}`);
     } finally {
       setIsLoading(false);
