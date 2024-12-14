@@ -11,11 +11,14 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email === 'adam@apogeeintelligence.ai' && password === 'P@ssword123!') {
-      document.cookie = `user=${JSON.stringify({ email })};path=/;max-age=604800`;
-      window.location.href = '/';
+    const res = await signIn('credentials', {
+      email,
+      password,
+      redirect: true,
+      callbackUrl: '/'
+    });
     } else {
       alert('Invalid credentials');
     }
