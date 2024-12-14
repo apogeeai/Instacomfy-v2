@@ -30,8 +30,14 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         body: JSON.stringify({ prompt }),
       });
 
+      const data = await response.json();
+      
       if (!response.ok) {
-        throw new Error('Failed to generate image');
+        throw new Error(data.error || 'Failed to generate image');
+      }
+      
+      if (!data.imageUrl) {
+        throw new Error('No image URL received');
       }
 
       const data = await response.json();

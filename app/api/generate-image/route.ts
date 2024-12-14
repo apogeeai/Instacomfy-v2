@@ -3,12 +3,12 @@ import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
+  if (!process.env.OPENAI_API_KEY) {
+    return NextResponse.json({ error: 'OpenAI API key is not configured' }, { status: 500 });
+  }
+
   try {
     const { prompt } = await request.json();
-    
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OpenAI API key is not configured');
-    }
     
     const openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -26,8 +26,11 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ imageUrl: response.data[0].url });
-  } catch (error) {
-    console.error('Error:', error);
-    return NextResponse.json({ error: 'Failed to generate image' }, { status: 500 });
+  } catch (error: any) {
+    console.error('OpenAI Error:', error);
+    return NextResponse.json(
+      { error: error?.message || 'Failed to generate image' },
+      { status: 500 }
+    );
   }
 }
