@@ -44,18 +44,31 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         const imageFile = new File([imageBlob], `dalle-${Date.now()}.png`, { type: 'image/png' });
         
         // Upload to Supabase storage
-        const supabaseImageUrl = await uploadImageToSupabase(imageFile, 'ai-generated');
-        
-        // Save to Supabase database
-        const { error } = await supabase
+        // Upload to Supabase storage
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('ai-images')
+          .upload(fileName, imageFile);
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('ai-images')
+          .getPublicUrl(fileName);
+
+        // Save to database
+        const { error: dbError } = await supabase
           .from('generated_images')
           .insert([
             { 
-              url: supabaseImageUrl,
+              url: publicUrl,
               prompt: prompt,
               created_at: new Date().toISOString()
             }
           ]);
+
+        if (dbError) throw dbError;
           
         if (error) {
           console.error('Error saving to database:', error);
