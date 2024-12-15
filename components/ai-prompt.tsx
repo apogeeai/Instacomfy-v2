@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,25 +63,12 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
           throw uploadError;
         }
 
-        // Create the public URL manually
-        const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-        const publicUrl = `${baseUrl}/storage/v1/object/public/images/${fileName}`;
+        // Get public URL without testing it
+        const { data: { publicUrl } } = supabase.storage
+          .from('images')
+          .getPublicUrl(fileName);
 
-        // Test the URL before proceeding
-        try {
-          const testResponse = await fetch(publicUrl, { method: 'HEAD' });
-          console.log('Response headers:', Object.fromEntries(testResponse.headers));
-          console.log('Response status:', testResponse.status);
-          
-          if (!testResponse.ok) {
-            throw new Error(`URL not accessible: ${publicUrl}`);
-          }
-        } catch (error) {
-          console.error("URL test failed:", error);
-          throw error;
-        }
-
-        // Save to generated_images table with the manual URL
+        // Save to generated_images table
         const { data: dbData, error: dbError } = await supabase
           .from('generated_images')
           .insert([
