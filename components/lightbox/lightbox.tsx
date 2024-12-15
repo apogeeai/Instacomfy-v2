@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Image } from "@/lib/data";
@@ -21,23 +21,10 @@ export function Lightbox({
   onNext,
   onPrevious
 }: LightboxProps) {
-  const [isSlideshow, setIsSlideshow] = useState(false);
-  
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isSlideshow) {
-      interval = setInterval(onNext, 3000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isSlideshow, onNext]);
-
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") onClose();
     if (e.key === "ArrowRight") onNext();
     if (e.key === "ArrowLeft") onPrevious();
-    if (e.key === " ") setIsSlideshow(prev => !prev);
   }, [onClose, onNext, onPrevious]);
 
   const handleWheel = useCallback((e: React.WheelEvent) => {
@@ -68,17 +55,6 @@ export function Lightbox({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm dark:bg-background/90">
       <div className="relative h-full w-full">
         <div className="absolute right-4 top-4 z-50 flex gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsSlideshow(prev => !prev)}
-          >
-            {isSlideshow ? (
-              <span className="h-6 w-6">⏸</span>
-            ) : (
-              <span className="h-6 w-6">▶</span>
-            )}
-          </Button>
           <Button
             variant="ghost"
             size="icon"

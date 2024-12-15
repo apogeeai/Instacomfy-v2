@@ -59,6 +59,9 @@ module.exports = {
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
+      backgroundColor: {
+        card: '#141414',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

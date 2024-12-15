@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +37,6 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
       if (response.data?.[0]?.url) {
         const openaiUrl = response.data[0].url;
         
-        // Download the image from OpenAI URL through our proxy
         const imageResponse = await fetch('/api/fetch-image', {
           method: 'POST',
           headers: {
@@ -54,25 +53,35 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
         const imageFile = new File([imageBlob], fileName, { type: 'image/png' });
 
-        // Upload to Supabase storage bucket 'images'
+        // Upload to Supabase storage
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('images')
           .upload(fileName, imageFile);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error("Upload error:", uploadError);
+          throw uploadError;
+        }
 
-        // Get the public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from('images')
-          .getPublicUrl(fileName, {
-            transform: {
-              width: 1024,
-              height: 1024,
-              quality: 100
-            }
-          });
+        // Create the public URL manually
+        const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const publicUrl = `${baseUrl}/storage/v1/object/public/images/${fileName}`;
 
-        // Save to generated_images table
+        // Test the URL before proceeding
+        try {
+          const testResponse = await fetch(publicUrl, { method: 'HEAD' });
+          console.log('Response headers:', Object.fromEntries(testResponse.headers));
+          console.log('Response status:', testResponse.status);
+          
+          if (!testResponse.ok) {
+            throw new Error(`URL not accessible: ${publicUrl}`);
+          }
+        } catch (error) {
+          console.error("URL test failed:", error);
+          throw error;
+        }
+
+        // Save to generated_images table with the manual URL
         const { data: dbData, error: dbError } = await supabase
           .from('generated_images')
           .insert([
@@ -82,10 +91,12 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
               created_at: new Date().toISOString()
             }
           ])
-          .select()
-          .single();
+          .select();
 
-        if (dbError) throw dbError;
+        if (dbError) {
+          console.error("Database error:", dbError);
+          throw dbError;
+        }
 
         // Pass the public URL to the gallery
         onGenerate(publicUrl);
