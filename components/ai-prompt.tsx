@@ -47,14 +47,14 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         // Upload to Supabase storage
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('ai-images')
+          .from('images')
           .upload(fileName, imageFile);
 
         if (uploadError) throw uploadError;
 
         // Get public URL
         const { data: { publicUrl } } = supabase.storage
-          .from('ai-images')
+          .from('images')
           .getPublicUrl(fileName);
 
         // Save to database
