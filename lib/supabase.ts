@@ -1,6 +1,11 @@
 
-import { Database } from '@replit/database';
+import { createClient } from '@supabase/supabase-js'
 
-const db = new Database();
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export { db };
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: false
+  }
+})

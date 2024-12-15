@@ -10,17 +10,10 @@ interface GalleryProps {
     url: string;
     likes: number;
     description: string;
-    created_at: string; // Added created_at for sorting
   }[];
 }
 
-export async function Gallery({ images }: GalleryProps) {
-  //const keys = await db.list('image:'); // This line and the following block should be moved to a data fetching function or component.
-  //const images = await Promise.all(
-  //  keys.map(key => db.get(key))
-  //);
-  //images.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
+export function Gallery({ images }: GalleryProps) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {images.map((image) => (
@@ -48,11 +41,3 @@ export async function Gallery({ images }: GalleryProps) {
     </div>
   );
 }
-
-// Example of how to fetch data using Replit DB. This should be integrated into a higher level component.
-// export async function fetchData() {
-//   const keys = await db.list('image:');
-//   const images = await Promise.all(keys.map(key => db.get(key)));
-//   images.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-//   return images;
-// }
