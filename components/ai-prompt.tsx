@@ -64,7 +64,13 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         // Get the public URL
         const { data: { publicUrl } } = supabase.storage
           .from('images')
-          .getPublicUrl(fileName);
+          .getPublicUrl(fileName, {
+            transform: {
+              width: 1024,
+              height: 1024,
+              quality: 100
+            }
+          });
 
         // Save to generated_images table
         const { data: dbData, error: dbError } = await supabase
