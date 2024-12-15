@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -71,15 +70,18 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         const { data: dbData, error: dbError } = await supabase
           .from('generated_images')
           .insert([
-            {
+            { 
               url: publicUrl,
               prompt: prompt,
               created_at: new Date().toISOString()
             }
-          ]);
+          ])
+          .select()
+          .single();
 
         if (dbError) throw dbError;
 
+        // Pass the public URL to the gallery
         onGenerate(publicUrl);
         setPrompt("");
       }
