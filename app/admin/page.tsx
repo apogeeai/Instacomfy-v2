@@ -28,7 +28,14 @@ export default function Admin() {
     loadImages();
   }
 
-  if (!isAdmin) return <div>Access denied</div>;
+  if (!isAdmin) {
+    return (
+      <div className="container py-8">
+        <h1 className="text-2xl font-bold text-red-500">Access Denied</h1>
+        <p>You must be an admin to view this page.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container py-8">

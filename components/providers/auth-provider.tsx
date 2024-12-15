@@ -23,33 +23,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  useEffect(() => {
+    const checkSession = async () => {
+      const response = await fetch('/api/auth/session');
+      const session = await response.json();
+      
+      if (session?.user) {
+        setUser(session.user);
+        setIsAdmin(session.user.email === 'adam@apogeeintelligence.ai');
+      }
+    };
+    
+    checkSession();
+  }, []);
+
   const signIn = () => {
     window.location.href = '/login';
   };
 
-  const signOut = () => {
-    document.cookie = 'user=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT';
+  const signOut = async () => {
+    await fetch('/api/auth/signout', { method: 'POST' });
     window.location.href = '/';
   };
-
-  useEffect(() => {
-    const getCookie = (name: string) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(';').shift();
-    };
-
-    const userCookie = getCookie('user');
-    if (userCookie) {
-      try {
-        const parsedUser = JSON.parse(userCookie);
-        setUser(parsedUser);
-        setIsAdmin(parsedUser.email === 'adam@apogeeintelligence.ai');
-      } catch (error) {
-        console.error('Error parsing user cookie:', error);
-      }
-    }
-  }, []);
 
   return (
     <AuthContext.Provider value={{ user, setUser, isAdmin, signIn, signOut }}>
