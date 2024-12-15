@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import OpenAI from "openai";
-import { supabase } from "@/lib/supabase";
+//import { supabase } from "@/lib/supabase"; //Removed Supabase import
 
 interface AIPromptProps {
   onGenerate: (imageUrl: string) => void;
@@ -54,38 +54,35 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.png`;
         const imageFile = new File([imageBlob], fileName, { type: 'image/png' });
 
-        // Upload to Supabase storage bucket 'images'
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('images')
-          .upload(fileName, imageFile);
+        // Upload to Supabase storage bucket 'images' - Removed Supabase upload
+        //const { data: uploadData, error: uploadError } = await supabase.storage
+        //  .from('images')
+        //  .upload(fileName, imageFile);
 
-        if (uploadError) throw uploadError;
+        //if (uploadError) throw uploadError;
 
-        // Get the public URL
-        const { data: { publicUrl } } = supabase.storage
-          .from('images')
-          .getPublicUrl(fileName, {
-            transform: {
-              width: 1024,
-              height: 1024,
-              quality: 100
-            }
-          });
+        // Get the public URL - Removed Supabase public URL retrieval
+        //const { data: { publicUrl } } = supabase.storage
+        //  .from('images')
+        //  .getPublicUrl(fileName, {
+        //    transform: {
+        //      width: 1024,
+        //      height: 1024,
+        //      quality: 100
+        //    }
+        //  });
 
-        // Save to generated_images table
-        const { data: dbData, error: dbError } = await supabase
-          .from('generated_images')
-          .insert([
-            { 
-              url: publicUrl,
-              prompt: prompt,
-              created_at: new Date().toISOString()
-            }
-          ])
-          .select()
-          .single();
+        // Assuming the proxy returns a public URL directly.
+        const publicUrl = URL.createObjectURL(imageFile);
 
-        if (dbError) throw dbError;
+
+        // Save to generated_images in Replit DB
+        const id = Date.now().toString();
+        await db.set(`image:${id}`, {
+          url: publicUrl,
+          prompt: prompt,
+          created_at: new Date().toISOString()
+        });
 
         // Pass the public URL to the gallery
         onGenerate(publicUrl);
