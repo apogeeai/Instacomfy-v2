@@ -1,20 +1,23 @@
 
--- Create a new bucket for AI generated images
-INSERT INTO storage.buckets (id, name) 
-VALUES ('ai-images', 'AI Generated Images');
+-- Enable the storage extension
+create extension if not exists "storage" schema "storage";
 
--- Allow public read access
-CREATE POLICY "Public Access"
-ON storage.objects FOR SELECT
-USING (bucket_id = 'ai-images');
+-- Create the images bucket if it doesn't exist
+insert into storage.buckets (id, name)
+values ('images', 'images')
+on conflict do nothing;
 
--- Allow authenticated uploads
-CREATE POLICY "Allow uploads"
-ON storage.objects FOR INSERT
-WITH CHECK (bucket_id = 'ai-images');
+-- Allow public read access to images bucket
+create policy "Public Access"
+on storage.objects for select
+using ( bucket_id = 'images' );
 
--- Allow owner to delete
-CREATE POLICY "Allow delete"
-ON storage.objects FOR DELETE USING (
-  auth.uid() = owner
-);
+-- Allow authenticated uploads to images bucket
+create policy "Allow uploads"
+on storage.objects for insert
+with check ( bucket_id = 'images' );
+
+-- Allow owner to delete their uploads
+create policy "Allow delete own files"
+on storage.objects for delete
+using ( auth.uid() = owner );
