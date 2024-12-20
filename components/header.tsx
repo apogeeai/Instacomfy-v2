@@ -6,13 +6,22 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/providers/auth-provider";
 import { LogIn, LogOut, Menu, X, Camera } from "lucide-react";
-import { signIn, signOut } from "next-auth/react";
-import { useState } from "react";
+import { signIn as nextAuthSignIn, signOut as nextAuthSignOut } from "next-auth/react";
+import { useState, useEffect } from "react";
 
 export function Header() {
   const pathname = usePathname();
   const { user, isAdmin } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   const NavItems = () => (
     <>
@@ -64,7 +73,10 @@ export function Header() {
   );
 
   return (
-    <nav className="sticky top-0 z-40 w-full backdrop-blur-lg bg-background/80 border-b border-border/40 supports-[backdrop-filter]:bg-background/60">
+    <nav 
+      className="sticky top-0 z-40 w-full backdrop-blur-lg bg-background/80 border-b border-border/40 supports-[backdrop-filter]:bg-background/60"
+      data-lpignore="true"
+    >
       <div className="mx-auto min-w-[420px] max-w-[1260px] px-4">
         <div className="flex h-16 items-center">
           <div className="flex w-full justify-between">
@@ -85,7 +97,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => signOut()}
+                  onClick={() => nextAuthSignOut()}
                   className="hover:bg-foreground/5"
                 >
                   <LogOut className="h-5 w-5" />
@@ -94,7 +106,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => signIn("github")}
+                  onClick={() => nextAuthSignIn('google')}
                   className="gap-2 hover:bg-foreground/5"
                 >
                   <LogIn className="h-4 w-4" />

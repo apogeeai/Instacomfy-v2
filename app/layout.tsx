@@ -10,15 +10,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <AuthProvider>
-            <Header />
-            <main className="mx-auto max-w-[1260px]">
-              {children}
-            </main>
-          </AuthProvider>
-        </ThemeProvider>
+      <head>
+        <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+      </head>
+      <body suppressHydrationWarning>
+        <div id="app-root" data-lpignore="true">
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+            <AuthProvider>
+              <Header />
+              <main className="mx-auto max-w-[1260px]">
+                {children}
+              </main>
+            </AuthProvider>
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   );
