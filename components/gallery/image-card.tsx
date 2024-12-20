@@ -1,4 +1,7 @@
+"use client";
 
+import { Heart } from "lucide-react";
+import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 import { Image as ImageType } from "@/lib/data";
 
@@ -9,19 +12,17 @@ interface ImageCardProps {
 
 export function ImageCard({ image, onClick }: ImageCardProps) {
   return (
-    <div 
-      className="relative w-full h-full cursor-pointer overflow-hidden rounded-lg"
-      onClick={onClick}
-    >
-      <Image
-        src={image.url}
-        alt={image.description || "Gallery image"}
-        className="object-cover"
-        fill
-        sizes="304px"
-        loading="lazy"
-        quality={90}
-      />
-    </div>
+    <CardContent className="gallery-item relative w-full h-full overflow-hidden rounded-[3px]">
+      <button onClick={onClick} className="w-full h-full">
+        <Image
+          src={image.url}
+          alt={image.description}
+          fill
+          className="object-cover transition-transform duration-300"
+          sizes="(max-width: 768px) 33vw, 25vw"
+          priority={image.id <= 4 ? true : undefined}
+        />
+      </button>
+    </CardContent>
   );
 }
