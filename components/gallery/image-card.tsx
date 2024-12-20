@@ -1,6 +1,5 @@
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { Image as ImageType } from "@/lib/data";
 
 interface ImageCardProps {
@@ -10,8 +9,8 @@ interface ImageCardProps {
 
 export function ImageCard({ image, onClick }: ImageCardProps) {
   return (
-    <motion.div 
-      className="relative aspect-square rounded-lg overflow-hidden cursor-pointer bg-muted"
+    <div 
+      className="relative w-full h-full cursor-pointer overflow-hidden rounded-lg"
       onClick={onClick}
     >
       <Image
@@ -19,10 +18,10 @@ export function ImageCard({ image, onClick }: ImageCardProps) {
         alt={image.description || "Gallery image"}
         className="object-cover"
         fill
-        sizes="(max-width: 768px) 33vw, 304px"
+        sizes="304px"
         loading="lazy"
         quality={90}
       />
-    </motion.div>
+    </div>
   );
 }
