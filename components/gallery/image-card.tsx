@@ -12,14 +12,14 @@ interface ImageCardProps {
 
 export function ImageCard({ image, onClick }: ImageCardProps) {
   return (
-    <CardContent className="gallery-item relative w-[304px] h-[304px] overflow-hidden rounded-[3px]">
-      <button onClick={onClick} className="">
+    <CardContent className="gallery-item relative w-full h-full overflow-hidden rounded-[3px]">
+      <button onClick={onClick} className="w-full h-full">
         <Image
           src={image.url}
           alt={image.description}
           fill
           className="object-cover transition-transform duration-300"
-          sizes="304px"
+          sizes="(max-width: 768px) 33vw, 25vw"
           priority={image.id <= 4 ? true : undefined}
         />
       </button>

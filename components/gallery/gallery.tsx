@@ -28,7 +28,7 @@ export function Gallery({ images }: GalleryProps) {
 
   return (
     <>
-      <div className="gallery-grid">
+      <div className="gallery-grid min-w-[420px] max-w-[1260px] mx-auto grid grid-cols-3 gap-10">
         {images.map((image) => (
           <ImageCard
             key={image.id}
