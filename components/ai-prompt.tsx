@@ -98,13 +98,13 @@ export function AIPrompt({ onGenerate }: AIPromptProps) {
   };
 
   return (
-    <Card className="fixed bottom-4 left-1/2 w-full max-w-[600px] -translate-x-1/2 p-4">
+    <Card className="fixed bottom-4 left-1/2 w-full max-w-[600px] -translate-x-1/2 p-4 bg-background border-border">
       <form onSubmit={handleSubmit} className="flex space-x-2">
         <Input
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Enter a prompt to generate an AI image..."
-          className="flex-1"
+          className="flex-1 bg-background text-foreground"
           disabled={isLoading}
         />
         <Button type="submit" disabled={isLoading}>

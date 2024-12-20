@@ -11,9 +11,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-      <Header />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
+            <Header />
             <main className="mx-auto max-w-[1260px]">
               {children}
             </main>
